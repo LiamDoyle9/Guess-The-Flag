@@ -1,5 +1,5 @@
 # Guess The Flag
- The classic 'Guess The Flag' game creating using HTML/CSS and JavaScript
+ The classic 'Guess The Flag' game created using HTML/CSS and JavaScript
 
 ![Preview Image](/images/prev1.png "Preview image from Guess The Flag")
 
