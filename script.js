@@ -1,9 +1,5 @@
 'use strict';
 
-let selection = [];
-let countryToGuess;
-
-
 const flagCodes = {
     "ad": "Andorra",
     "ae": "United Arab Emirates",
@@ -263,7 +259,13 @@ const flagCodes = {
     "zw": "Zimbabwe"
 }
 
-// object{ key : value }
+let lives = 3;
+let score = 0;
+let highscore = 0;
+
+let threeFlags = [];
+let value = '';
+
 
 
 
@@ -278,38 +280,155 @@ let randomKey = function (obj) {
 };
 
 
-/**
- * Generate three flags based on the three random keys that are generated. A URL is created for each key and used to pull the img from the API. 
- * @param {*} obj 
- */
-let generateThreeFlags = function(obj){
+let displayThreeFlags = function(obj){
     for(let i = 0; i < 3; i++){
-        selection.push(randomKey(obj));
-        document.getElementById(`flagImg${i}`).src = `https://flagcdn.com/144x108/${selection[i]}.png`;
+        threeFlags.push(randomKey(obj));
+        document.getElementById(`flagImg${i}`).src = `https://flagcdn.com/144x108/${threeFlags[i]}.png`
     }
 }
 
 
-let generateCountryToGuess = function(arr, object){
-    let propertyName = arr[arr.length * Math.random() << 0];
-    //let name = Object.key[object[propertyName]];
-    let value = object[propertyName];
+let generateCountryToGuess = function(arr, obj){
+    let key = arr[arr.length * Math.random() << 0];
+    value = obj[key];
     return value;
 }
 
-generateThreeFlags(flagCodes);    
-
-document.querySelector('.country').textContent = generateCountryToGuess(selection, flagCodes);
-countryToGuess = generateCountryToGuess(selection, flagCodes);
-
-
-console.log(`Selection: ${selection}`);
-console.log(`Country to guess: ${countryToGuess}`);
+let displayCountryToGuess = function(country){
+    document.querySelector('.country').textContent = generateCountryToGuess(threeFlags, flagCodes);
+}
 
 
-document.querySelector('#flag0').addEventListener('click', function(){
+
+
+
+//Click events for images
+document.getElementById("flagImg0").addEventListener('click', function(){    
+    if(flagCodes[threeFlags[0]] === value){
+        document.querySelector('#flag0').style.backgroundColor = '#60b374';
+        setTimeout(() => {correctGuess();}, 1000);
+        setTimeout(() => {newRound();}, 1000);
+        
+    }  else {
+        document.querySelector('#flag0').style.backgroundColor = '#d14545';
+        setTimeout(() => {incorrectGuess();}, 1000);
+        setTimeout(() => {newRound();}, 1000);
+    }
+})
+
+
+
+document.getElementById("flagImg1").addEventListener('click', function(){
+    if(flagCodes[threeFlags[1]] === value){
+        document.querySelector('#flag1').style.backgroundColor = '#60b374';
+        setTimeout(() => {correctGuess();}, 1000);
+        setTimeout(() => {newRound();}, 1000);
+        
+    } else {
+        document.querySelector('#flag1').style.backgroundColor = '#d14545';
+        setTimeout(() => {incorrectGuess();}, 1000);
+        setTimeout(() => {newRound();}, 1000);
+        
+    }
+
+})
+
+document.getElementById("flagImg2").addEventListener('click', function(){
+
+    if(flagCodes[threeFlags[2]] === value){
+        document.querySelector('#flag2').style.backgroundColor = '#60b374';
+        setTimeout(() => {correctGuess();}, 2000);
+        setTimeout(() => {newRound();}, 2000);
+    }  else {
+        document.querySelector('#flag2').style.backgroundColor = '#d14545';
+        setTimeout(() => {incorrectGuess();}, 1000);
+        setTimeout(() => {newRound();}, 1000);
+    }
+})
+
+
+
+
+const run = function(){
+
+    document.querySelector('.label-lives').textContent = `❤️ Lives: ${lives}`;
+    document.querySelector('.label-score').textContent = `⭐️ Score: ${score}`;
+    document.querySelector('.label-highscore').textContent = `🥇 Highscore: ${highscore}`;
+    displayThreeFlags(flagCodes);
+    generateCountryToGuess(threeFlags, flagCodes);
+    displayCountryToGuess();
+
+    
+}
+
+//Click event for new game button
+document.querySelector('.newGame').addEventListener('click', function(){
+    lives = 3;
+    score = 0;
+    document.querySelector('.label-lives').textContent = `❤️ Lives: ${lives}`;
+    document.querySelector('.label-score').textContent = `⭐️ Score: ${score}`;
+    document.querySelector('.label-highscore').textContent = `🥇 Highscore: ${highscore}`;
+    document.querySelector('h1').textContent = 'Choose the correct flag!';
+    document.querySelector('body').style.backgroundColor = '#222';
+    document.querySelector('#flag0').style.backgroundColor = '#eee';
+    document.querySelector('#flag1').style.backgroundColor = '#eee';
+    document.querySelector('#flag2').style.backgroundColor = '#eee';
+    run();
+})
+
+
+let correctGuess = function(){
+    score += 1;
+    if(score > highscore){
+        highscore = score;
+        document.querySelector('.label-score').textContent = `⭐️ Score: ${score}`;
+        document.querySelector('.label-highscore').textContent = `🥇 Highscore: ${highscore}`;
+    }
+}
+
+let incorrectGuess = function(){
+    if(lives >= 0) {
+        lives -= 1;
+        document.querySelector('.label-lives').textContent = `❤️ Lives: ${lives}`;
+    } else {
+        gameOver();
+    }
+}
+
+
+let newRound = function(){
+
+    for(let i = 0; i < 3; i++){
+        threeFlags.pop();
+    }
+
+    if(lives > 0){
+        document.querySelector('#flag0').style.backgroundColor = '#eee';
+        document.querySelector('#flag1').style.backgroundColor = '#eee';
+        document.querySelector('#flag2').style.backgroundColor = '#eee';
+        displayThreeFlags(flagCodes);
+        generateCountryToGuess(threeFlags, flagCodes);
+        displayCountryToGuess();
+    } else {
+        gameOver();
+    }
+
 
 }
+
+
+let gameOver = function(){
+    document.querySelector('h1').textContent = 'GAME OVER!';
+    document.querySelector('body').style.backgroundColor = '#d14545';
+}
+
+
+
+
+
+//Running the game
+run();
+
 
 
 
